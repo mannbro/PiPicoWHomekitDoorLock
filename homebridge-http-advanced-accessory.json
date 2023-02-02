@@ -1,0 +1,47 @@
+{
+    "accessory": "HttpAdvancedAccessory",
+    "service": "LockMechanism",
+    "name": "Front Door",
+    "forceRefreshDelay": 10,
+    "username": "admin",
+    "password": "admin",
+    "debug": false,
+    "urls": {
+        "getLockCurrentState": {
+            "url": "http://192.168.2.1/?getstatus",
+            "mappers": [
+                {
+                    "type": "jpath",
+                    "parameters": {
+                        "jpath": "$.currentState",
+                        "index": 0
+                    }
+                }
+            ]
+        },
+        "getLockTargetState": {
+            "url": "http://192.168.2.1/?getstatus",
+            "mappers": [
+                {
+                    "type": "jpath",
+                    "parameters": {
+                        "jpath": "$.targetState",
+                        "index": 0
+                    }
+                }
+            ]
+        },
+        "setLockTargetState": {
+            "url": "http://192.168.2.1/?${value==0?'unlock':'lock'}",
+            "mappers": [
+                {
+                    "type": "jpath",
+                    "parameters": {
+                        "jpath": "$.targetState",
+                        "index": 0
+                    }
+                }
+            ]
+        }
+    }
+}
