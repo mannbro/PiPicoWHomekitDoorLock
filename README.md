@@ -6,7 +6,7 @@ Unlock the front door using a Raspberry Pi Pico W and Homebridge.
 # YouTube Video
 To learn more, check out the YouTube video I made about the Garage Door Opener
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/-h3uSNCeCGY/0.jpg)](https://www.youtube.com/watch?v=-h3uSNCeCGY)
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/tJPmqTGcAxA/0.jpg)](https://www.youtube.com/watch?v=tJPmqTGcAxA)
 
 # Setting up the hardware
 In order to control the door and detect if the door is opened or closed, we just need to use a single pin on the Raspberry Pi Pico.
