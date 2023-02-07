@@ -1,6 +1,6 @@
 # PiPicoWHomekitDoorLock
 
-Unlock the front door using a Raspberry Pi Pico W and Homebridge.
+Unlock the front door using a Raspberry Pi Pico W, a relay, an electromagnetic backplate and Homebridge.
 
 
 # YouTube Video
