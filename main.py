@@ -1,7 +1,7 @@
 import config
 import network
 import socket
-from utime import sleep_ms
+from utime import sleep_ms, ticks_us, ticks_diff
 from uselect import select
 from machine import Pin
 
@@ -21,6 +21,10 @@ CURRENT_LOCK_STATE_SECURED = 1
 CURRENT_LOCK_STATE_JAMMED = 2
 CURRENT_LOCK_STATE_UNKNOWN = 3
 
+#Config
+REBOOT_AFTER_SECONDS=60*60*12 #12 hours
+REBOOT_AFTER_SECONDS_IF_NO_WIFI=120 #1 minute
+
 
 #Setup pins for relay and sensors
 relay = Pin(RELAY_PIN, Pin.OUT)
@@ -38,8 +42,18 @@ def connectWifi():
     wifi.connect(config.ssid, config.password)
 
     max_wait = 10
+    
+    wifiStartTime = ticks_us()
     while wifi.status() != 3:
-        print('waiting for connection. Status: '+str(wifi.status()))
+        wifiElapsedTimeS = round(ticks_diff(ticks_us(), wifiStartTime) / 1000000.0)
+        print("Waiting for connection for: {} seconds".format(wifiElapsedTimeS))
+        
+        if wifiElapsedTimeS >= REBOOT_AFTER_SECONDS_IF_NO_WIFI:
+            print("Rebooting...")
+            sleep_ms(200)
+            machine.reset()
+
+        print('Wifi status: '+str(wifi.status()))
         sleep_ms(1000)
 
     print('connected')
@@ -129,12 +143,23 @@ def handleRequest(conn, address):
     conn.close()
 
 #Main Loop
+startTime = ticks_us()
+
 while True:
+    elapsedTimeS = round(ticks_diff(ticks_us(), startTime) / 1000000.0)
+    print("Elapsed time: {} seconds".format(elapsedTimeS))
+    
+    if elapsedTimeS >= REBOOT_AFTER_SECONDS:
+        print("Rebooting...")
+        sleep_ms(200)
+        machine.reset()
+
     #Check if wifi is connected, if not, reconnect
     if wifi.isconnected() == False:
         print('Connecting wifi...')
         connectWifi()
 
+    print('Wifi connected.')
     #Handle incoming HTTP requests in a non-blocking way
     r, w, err = select((s,), (), (), 1)
 
@@ -146,3 +171,4 @@ while True:
                 handleRequest(conn, addr)
             except OSError as e:
                 pass
+
